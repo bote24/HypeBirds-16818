@@ -56,8 +56,7 @@ public class Prueba extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor UpLeft = null, UpRight = null, DownLeft = null, DownRight = null, Elevador1 = null, Elevador2 = null;
-    private Servo base;
-    private CRServo garra, arriba_abajo, rotacion;
+    private CRServo garra;
 
 
     @Override
@@ -72,12 +71,10 @@ public class Prueba extends LinearOpMode {
         UpRight = hardwareMap.get(DcMotor.class, "leftFront");
         DownLeft  = hardwareMap.get(DcMotor.class, "rightRear");
         DownRight  = hardwareMap.get(DcMotor.class, "leftRear");
-        Elevador1  = hardwareMap.get(DcMotor.class, "ElevaddorIzq");
+        Elevador1  = hardwareMap.get(DcMotor.class, "ElevadorIzq");
         Elevador2  = hardwareMap.get(DcMotor.class, "ElevadorDer");
-        garra = hardwareMap.get(CRServo.class, "garra1");
-        base = hardwareMap.get(Servo.class, "garra2");
-        arriba_abajo = hardwareMap.get(CRServo.class, "garra3");
-        rotacion = hardwareMap.get(CRServo.class, "garra4");
+        garra = hardwareMap.get(CRServo.class, "garra");
+
 
 
 
@@ -86,6 +83,7 @@ public class Prueba extends LinearOpMode {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         UpLeft.setDirection(DcMotor.Direction.REVERSE);
         DownLeft.setDirection(DcMotor.Direction.REVERSE);
+        Elevador1.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -111,13 +109,11 @@ public class Prueba extends LinearOpMode {
             double turn  =  -gamepad1.right_stick_x;
             double subir = gamepad2.right_trigger;
             double bajar = gamepad2.left_trigger;
-            double arriba_servo = gamepad2.left_stick_y;
-            double rotacion_p0 = gamepad2.right_stick_y;
             UpLeftPower   = Range.clip(acelerar - regresar + turn, -1.0, 1.0) ;
             UpRightPower   = Range.clip(acelerar - regresar - turn, -1.0, 1.0) ;
             DownLeftPower = Range.clip(acelerar - regresar + turn, -1.0, 1.0);
             DownRightPower = Range.clip(acelerar - regresar - turn, -1.0, 1.0);
-            ElevadorPower = Range.clip(subir - bajar, -1.0, 1.0);
+            ElevadorPower = Range.clip(subir - bajar, -.20, .20);
 
             // Tank Mode uses one stick to control each wheel.
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -126,12 +122,7 @@ public class Prueba extends LinearOpMode {
 
 
 
-            if (gamepad2.dpad_right){
-                base.setPosition(0);
-            }
-            if (gamepad2.dpad_left){
-                base.setPosition(.5);
-            }
+
             if (gamepad2.dpad_up){
                 garra.setPower(1);
             }
@@ -171,8 +162,7 @@ public class Prueba extends LinearOpMode {
             DownRight.setPower(DownRightPower);
             Elevador1.setPower(ElevadorPower);
             Elevador2.setPower(ElevadorPower);
-            arriba_abajo.setPower(arriba_servo);
-            rotacion.setPower(rotacion_p0);
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
 //            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);

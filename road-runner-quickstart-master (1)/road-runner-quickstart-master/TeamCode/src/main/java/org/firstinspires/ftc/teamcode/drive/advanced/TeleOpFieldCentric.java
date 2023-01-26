@@ -4,7 +4,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -18,11 +20,23 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @TeleOp(group = "advanced")
 public class TeleOpFieldCentric extends LinearOpMode {
+    private DcMotor Elevador1=null,Elevador2=null;
+    private CRServo garra;
     @Override
+
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        Elevador1  = hardwareMap.get(DcMotor.class, "ElevadorIzq");
+        Elevador2  = hardwareMap.get(DcMotor.class, "ElevadorDer");
+        garra = hardwareMap.get(CRServo.class, "garra");
+        Elevador2.setDirection(DcMotor.Direction.REVERSE);
+        Elevador1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Elevador2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Elevador1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Elevador2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        motor.setTargetPosition(1440);
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,6 +51,7 @@ public class TeleOpFieldCentric extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             // Read pose
+            double garraPoder=0;
             Pose2d poseEstimate = drive.getPoseEstimate();
 
             // Create a vector from the gamepad x/y inputs
@@ -55,15 +70,44 @@ public class TeleOpFieldCentric extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+            if (gamepad2.a){
+                SlidePOS(0,.5);
+            }
+            if (gamepad2.b){
+                SlidePOS(1000,.2);
+            }
+            if (gamepad2.x){
+                SlidePOS(2000,.2);
+            }
+            if (gamepad2.dpad_up){
+                garraPoder=.5;
+            }
+            if (gamepad2.dpad_down){
+                garraPoder=-.5;
+            }
 
             // Update everything. Odometry. Etc.
             drive.update();
-
+            garra.setPower(garraPoder);
             // Print pose to telemetry
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
+        }
+    }
+    private void SlidePOS(int slidePOS, double motorpower) {
+        Elevador1.setTargetPosition(slidePOS);
+        Elevador2.setTargetPosition(slidePOS);
+        Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Elevador1.setPower(motorpower);
+        Elevador2.setPower(motorpower);
+        while (Elevador1.isBusy() || Elevador2.isBusy()) {
+            telemetry.addData("Starting at",  "%7d :%7d",
+                    Elevador1.getCurrentPosition(),
+                    Elevador2.getCurrentPosition());
+
         }
     }
 }
