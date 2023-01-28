@@ -73,6 +73,11 @@ public class Prueba extends LinearOpMode {
         DownRight  = hardwareMap.get(DcMotor.class, "leftRear");
         Elevador1  = hardwareMap.get(DcMotor.class, "ElevadorIzq");
         Elevador2  = hardwareMap.get(DcMotor.class, "ElevadorDer");
+        Elevador2.setDirection(DcMotor.Direction.REVERSE);
+        Elevador1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Elevador2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Elevador1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Elevador2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         garra = hardwareMap.get(CRServo.class, "garra");
 
 
@@ -83,7 +88,7 @@ public class Prueba extends LinearOpMode {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         UpLeft.setDirection(DcMotor.Direction.REVERSE);
         DownLeft.setDirection(DcMotor.Direction.REVERSE);
-        Elevador1.setDirection(DcMotor.Direction.REVERSE);
+        Elevador2.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -164,8 +169,11 @@ public class Prueba extends LinearOpMode {
             Elevador2.setPower(ElevadorPower);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-//            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Starting at",  "%7d :%7d",
+                    Elevador1.getCurrentPosition(),
+                    Elevador2.getCurrentPosition());
+
+
             telemetry.update();
         }
     }

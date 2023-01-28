@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.advanced;
 
-import static org.firstinspires.ftc.teamcode.drive.advanced.TeleOpFieldCentric.LiftState.LIFT_END;
-import static org.firstinspires.ftc.teamcode.drive.advanced.TeleOpFieldCentric.LiftState.LIFT_START;
+import static org.firstinspires.ftc.teamcode.drive.advanced.TeleOpFieldCentricNotLinear.LiftState.LIFT_END;
+import static org.firstinspires.ftc.teamcode.drive.advanced.TeleOpFieldCentricNotLinear.LiftState.LIFT_START;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,39 +20,32 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * <p>
  * See lines 42-57.
  */
-//@Config
-@TeleOp(group = "advanced")
-public class TeleOpFieldCentric extends LinearOpMode {
+@TeleOp(name = "pito de jochobocho")
+public class TeleOpFieldCentricNotLinear extends OpMode {
     private DcMotor Elevador1=null,Elevador2=null;
     private CRServo garra;
+    int posi;
+    SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
     public enum LiftState {
         LIFT_START,
-        LIFT_END,
-        };
+        LIFT_END
+    };
 
-//    private PIDController controller;
-
-    public static double p = 0, i = 0, d = 0;
-    public static double f = 0;
-
-    public static int target = 0;
-
-    private final double ticks_in_degree = 537.7;
+    LiftState liftState = LIFT_START;
 
     final int LIFT_ZERO = 0;
     final int LIFT_LOW = 2353;
     final int LIFT_MED = 4000;
     final int LIFT_HIGH = 5600;
     int LIFT_GOING;
-    double motorpower = 0.4;
 
-    @Override
 
-    public void runOpMode() throws InterruptedException {
+
+    public void init() {
         // Initialize SampleMecanumDrive
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Elevador1  = hardwareMap.get(DcMotor.class, "ElevadorIzq");
-        Elevador2  = hardwareMap.get(DcMotor.class, "ElevadorDer");
+
+        Elevador1 = hardwareMap.get(DcMotor.class, "ElevadorIzq");
+        Elevador2 = hardwareMap.get(DcMotor.class, "ElevadorDer");
         garra = hardwareMap.get(CRServo.class, "garra");
         Elevador2.setDirection(DcMotor.Direction.REVERSE);
         Elevador1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -70,19 +63,13 @@ public class TeleOpFieldCentric extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         drive.setPoseEstimate(PoseStorage.currentPose);
+    }
 
-//        controller = new PIDController(p,i,d);
-//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getinstance().getTelemetry());
+        public void loop(){
 
-
-
-        waitForStart();
-        LiftState liftState = LIFT_START;
-        if (isStopRequested()) return;
-
-        while (opModeIsActive() && !isStopRequested()) {
             // Read pose
-//            double poder_ele=0;
+            double poder_ele=0;
+            double motorpower=.3;
             double garraPoder=0;
             Pose2d poseEstimate = drive.getPoseEstimate();
 
@@ -103,8 +90,9 @@ public class TeleOpFieldCentric extends LinearOpMode {
                     )
             );
 
-            //Elevador1.setPower(motorpower);
-            //Elevador2.setPower(motorpower);
+            Elevador1.setPower(motorpower);
+
+            Elevador2.setPower(motorpower);
             switch (liftState){
                 case LIFT_START:
                 if(gamepad2.a){
@@ -112,8 +100,8 @@ public class TeleOpFieldCentric extends LinearOpMode {
                     Elevador2.setTargetPosition(LIFT_ZERO);
                     Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Elevador1.setPower(motorpower);
-                    Elevador2.setPower(motorpower);
+                    //Elevador1.setPower(motorpower);
+                    //Elevador2.setPower(motorpower);
                     LIFT_GOING = LIFT_ZERO;
                     liftState = LIFT_END;
                 }
@@ -123,8 +111,8 @@ public class TeleOpFieldCentric extends LinearOpMode {
                         Elevador2.setTargetPosition(LIFT_LOW);
                         Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        Elevador1.setPower(motorpower);
-                        Elevador2.setPower(motorpower);
+                        //Elevador1.setPower(motorpower);
+                        //Elevador2.setPower(motorpower);
                         LIFT_GOING = LIFT_LOW;
                         liftState = LIFT_END;
                     }
@@ -134,8 +122,8 @@ public class TeleOpFieldCentric extends LinearOpMode {
                         Elevador2.setTargetPosition(LIFT_MED);
                         Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        Elevador1.setPower(motorpower);
-                        Elevador2.setPower(motorpower);
+                        //Elevador1.setPower(motorpower);
+                        //Elevador2.setPower(motorpower);
                         LIFT_GOING = LIFT_MED;
                         liftState = LIFT_END;
                     }
@@ -145,11 +133,11 @@ public class TeleOpFieldCentric extends LinearOpMode {
                         Elevador2.setTargetPosition(LIFT_HIGH);
                         Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        Elevador1.setPower(motorpower);
-                        Elevador2.setPower(motorpower);
                         LIFT_GOING = LIFT_HIGH;
                         liftState = LIFT_END;
+                        while (Elevador1.isBusy() || Elevador2.isBusy()) {
 
+                        }
                     }
 
                 break;
@@ -162,42 +150,37 @@ public class TeleOpFieldCentric extends LinearOpMode {
                     liftState = LIFT_START;
             }
 
-/*
+            /*
             if (gamepad2.a){
-                SlidePOS(0,.6);
+                posi =0;
             }
             if (gamepad2.b){
-                SlidePOS(2353,.4);
 
+                posi=2353;
             }
             if (gamepad2.x){
-                SlidePOS(4000,.4);
-
+                posi=4000;
             }
             if(gamepad2.y){
-                SlidePOS(5600,.4);
+                posi = 5600;
             }
-*/
+            */
             if (gamepad2.dpad_up){
                 garraPoder=.5;
             }
             if (gamepad2.dpad_down){
                 garraPoder=-.5;
             }
-//            if(gamepad2.left_bumper){
-//                poder_ele = .6;
-//            }
-//            if (gamepad2.right_bumper){
-//                poder_ele=-.3;
-//            }
-
-
+            if(gamepad2.left_bumper){
+                poder_ele = .3;
+            }
+            if (gamepad2.right_bumper){
+                poder_ele=-.3;
+            }
 
             // Update everything. Odometry. Etc.
             drive.update();
             garra.setPower(garraPoder);
-//            Elevador1.setPower(poder_ele);
-//            Elevador2.setPower(poder_ele);
             // Print pose to telemetry
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
@@ -205,41 +188,21 @@ public class TeleOpFieldCentric extends LinearOpMode {
             telemetry.addData("Starting at",  "%7d :%7d",
                     Elevador1.getCurrentPosition(),
                     Elevador2.getCurrentPosition());
-
-//            telemetry.addData("pos ", slidePos1, slidePos2);
-            telemetry.addData("target ", target);
             telemetry.update();
-
-            /*
-            int slidePos1 = Elevador1.getCurrentPosition();
-            int slidePos2 = Elevador2.getCurrentPosition();
-            double pid1 = controller.calculate(slidePos1, target);
-            double pid2 = controller.calculate(slidePos2, target);
-            double ff = Math.cos(Math.toRadians(target/ticks_in_degree)) * f;
-
-            double power = pid + ff;
-
-            Elevador1.setPower(power);
-            Elevador2.setPower(power);
-            */
-
-
         }
-    }
-    /*
-    private void SlidePOS(int slidePOS, double motorpower) {
-        Elevador1.setTargetPosition(slidePOS);
-        Elevador2.setTargetPosition(slidePOS);
-        Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Elevador1.setPower(motorpower);
-        Elevador2.setPower(motorpower);
-        while (Elevador1.isBusy() || Elevador2.isBusy()) {
-            telemetry.addData("Starting at",  "%7d :%7d",
-                    Elevador1.getCurrentPosition(),
-                    Elevador2.getCurrentPosition());
 
-        }
-    }
-    */
+//    private void SlidePOS(int slidePOS, double motorpower) {
+//        Elevador1.setTargetPosition(slidePOS);
+//        Elevador2.setTargetPosition(slidePOS);
+//        Elevador1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        Elevador2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        Elevador1.setPower(motorpower);
+//        Elevador2.setPower(motorpower);
+//        while (Elevador1.isBusy() || Elevador2.isBusy()) {
+//            telemetry.addData("Starting at",  "%7d :%7d",
+//                    Elevador1.getCurrentPosition(),
+//                    Elevador2.getCurrentPosition());
+//
+//        }
+//    }
 }
