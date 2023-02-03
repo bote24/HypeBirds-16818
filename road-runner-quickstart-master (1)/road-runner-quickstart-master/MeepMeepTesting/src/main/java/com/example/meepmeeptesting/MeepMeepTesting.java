@@ -15,38 +15,14 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 40, Math.toRadians(180), Math.toRadians(180), 15.3)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-12, 62.35, Math.toRadians(270)))
+                        drive.trajectorySequenceBuilder(new Pose2d(-36, -60, Math.toRadians(90)))
                                 //STAGE 1
-                                .lineToLinearHeading(new Pose2d(-12, 0, Math.toRadians(180)))
-                                //Subir elevador
-                                .waitSeconds(2)
 
-                                .lineToConstantHeading(new Vector2d(-14, 0))
-                                //STAGE 2 (
-                                //abrir garra y dejar cono
-                                .waitSeconds(2)
+                                .turn(Math.toRadians(90))
+                                .lineToConstantHeading(new Vector2d(-60, -60))
+                                .lineToConstantHeading(new Vector2d(-12.5, -60))
+                                .lineToConstantHeading(new Vector2d(-12.5, -26))
 
-                                .strafeRight(12)
-                                //agarrar cono y cerrar garra
-                                .waitSeconds(2)
-                                .lineToConstantHeading(new Vector2d(-56, 12))
-                                .waitSeconds(2)
-                                .lineToSplineHeading(new Pose2d(-34, 12, Math.toRadians(315)))
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-56, 12, Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-34, 12, Math.toRadians(315)))
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-56, 12, Math.toRadians(180)))
-                                .lineToSplineHeading(new Pose2d(-34, 12, Math.toRadians(315)))
-                                .forward(4)
-                                .lineToSplineHeading(new Pose2d(-56, 12, Math.toRadians(0)))
-
-//                                estacionamiento 1
-//                                .strafeLeft(12)
-//                                .back(23)
-                                //estacionamiento 2
-                                //Dejarlo asi
-                                //estacionamiento 3
 
                                 .build()
                 );

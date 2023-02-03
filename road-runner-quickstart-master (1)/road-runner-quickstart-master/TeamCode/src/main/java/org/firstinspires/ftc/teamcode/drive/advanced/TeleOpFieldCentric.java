@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 /**
  * This opmode demonstrates how one would implement field centric control using
@@ -74,7 +75,11 @@ public class TeleOpFieldCentric extends LinearOpMode {
 //        controller = new PIDController(p,i,d);
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getinstance().getTelemetry());
 
+        StandardTrackingWheelLocalizer myLocalizer = new StandardTrackingWheelLocalizer(hardwareMap);
 
+        // Retrieve our pose from the PoseStorage.currentPose static field
+        // See AutoTransferPose.java for further details
+        myLocalizer.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
         LiftState liftState = LIFT_START;
@@ -191,6 +196,20 @@ public class TeleOpFieldCentric extends LinearOpMode {
 //                poder_ele=-.3;
 //            }
 
+            if (gamepad1.dpad_down) {
+                drive.setMotorPowers(-.4,-.4,-.4,-.4);
+
+            }
+            if (gamepad1.dpad_left) {
+                drive.setMotorPowers(-.4, .4, -.4, .4);
+                 }
+            if (gamepad1.dpad_right) {
+                drive.setMotorPowers(.4, -.4, .4, -.4);
+
+            }
+            if (gamepad1.dpad_up) {
+                drive.setMotorPowers(0.4, 0.4, 0.4, 0.4);
+            }
 
 
             // Update everything. Odometry. Etc.
